@@ -4,7 +4,7 @@ Plugin Name: 2manydots - HTTPS forcer
 Plugin URI: https://www.2manydots.nl/
 Description: This plugin forces all URLs to be HTTPS. That secures your website!
 Author: 2manydots
-Version: 1.0
+Version: 1.1
 */
 
 //Plugin update chcker
@@ -85,39 +85,37 @@ function https_forcer_network_menu() {
 function https_forcer_network_options_page() {
     ?>
         <div class="wrap">
-        <h2>HTTPS Forcer Network Settings</h2>
-        <form method="post" action="edit.php?action=https_forcer_network_settings">
+            <h2>HTTPS Forcer Network Settings</h2>
+            <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+            <input type="hidden" name="action" value="https_forcer_update_network_settings">
             <?php settings_fields('https-forcer-network-options'); ?>
             <?php do_settings_sections('https-forcer-network'); ?>
-            <table class="form-table">
-                <tr valign="top">
-                <th scope="row">Enable HTTPS Forcer for All Sites</th>
-                <td>
-                    <input type="checkbox" name="network_https_forcer_enabled" value="1" <?php checked(1, get_site_option('network_https_forcer_enabled', 0)); ?> />
-                    <p class="description">Enabling this option will force all sites in the network to use HTTPS. If this option is disabled, each site administrator can choose to enable or disable HTTPS forcing individually.</p>
-                </td>
-                </tr>
-            </table>
-            <?php submit_button(); ?>
-        </form>
+                <table class="form-table">
+                    <tr valign="top">
+                    <th scope="row">Enable HTTPS Forcer for All Sites</th>
+                    <td>
+                        <input type="checkbox" name="network_https_forcer_enabled" value="1" <?php checked(1, get_site_option('network_https_forcer_enabled', 0)); ?> />
+                        <p class="description">Enabling this option will force all sites in the network to use HTTPS. If this option is disabled, each site administrator can choose to enable or disable HTTPS forcing individually.</p>
+                    </td>
+                    </tr>
+                </table>
+                <?php submit_button(); ?>
+            </form>
         </div>
     <?php
 }
 
 add_action('network_admin_edit_https_forcer_update_network_options', 'https_forcer_update_network_options');
 function https_forcer_update_network_options() {
+    // Verify nonce and permissions
+    if (!current_user_can('manage_network_options')) {
+        wp_die('Not allowed');
+    }
+
     check_admin_referer('https-forcer-network-options');
 
-    // Update the network-wide option
+    // Update the option and redirect
     update_site_option('network_https_forcer_enabled', isset($_POST['network_https_forcer_enabled']) ? 1 : 0);
-
-    // Redirect back to the network settings page
-    wp_redirect(add_query_arg(array('page' => 'https-forcer-network', 'updated' => 'true'), network_admin_url('settings.php')));
+    wp_redirect(add_query_arg(array('page' => 'https-forcer-network', 'updated' => 'true'), network_admin_url('admin.php')));
     exit;
-}
-
-add_action('network_admin_init', 'https_forcer_network_admin_init');
-function https_forcer_network_admin_init() {
-    // This hook is no longer needed if you are not doing any additional processing
-    // when the network option updates
 }
