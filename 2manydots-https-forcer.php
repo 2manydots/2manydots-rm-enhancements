@@ -4,7 +4,7 @@ Plugin Name: 2manydots - HTTPS forcer
 Plugin URI: https://www.2manydots.nl/
 Description: This plugin forces all URLs to be HTTPS. That secures your website!
 Author: 2manydots
-Version: 0.2
+Version: 1.0
 */
 
 //Plugin update chcker
