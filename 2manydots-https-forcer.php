@@ -57,10 +57,67 @@ function register_https_forcer_settings() {
     register_setting('https-forcer-options', 'https_forcer_enabled');
 }
 
-//Add function that forces everything to HTTPS
 function force_https() {
-    if (get_option('https_forcer_enabled', 1) && !is_ssl() && !is_admin()) {
+    $network_enabled = get_site_option('network_https_forcer_enabled', 0);
+    $site_enabled = get_option('https_forcer_enabled', 1);
+
+    if (($network_enabled || $site_enabled) && !is_ssl() && !is_admin()) {
         wp_redirect('https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'], 301);
         exit();
     }
+}
+
+// Multisite network options
+
+add_action('network_admin_menu', 'https_forcer_network_menu');
+
+function https_forcer_network_menu() {
+    add_menu_page(
+        'HTTPS Forcer Network Settings', // Page title
+        'HTTPS Forcer', // Menu title
+        'manage_network_options', // Capability
+        'https-forcer-network', // Menu slug
+        'https_forcer_network_options_page', // Callback function
+        'dashicons-lock' // Icon (optional)
+    );
+}
+
+function https_forcer_network_options_page() {
+    ?>
+        <div class="wrap">
+        <h2>HTTPS Forcer Network Settings</h2>
+        <form method="post" action="edit.php?action=https_forcer_network_settings">
+            <?php settings_fields('https-forcer-network-options'); ?>
+            <?php do_settings_sections('https-forcer-network'); ?>
+            <table class="form-table">
+                <tr valign="top">
+                <th scope="row">Enable HTTPS Forcer for All Sites</th>
+                <td>
+                    <input type="checkbox" name="network_https_forcer_enabled" value="1" <?php checked(1, get_site_option('network_https_forcer_enabled', 0)); ?> />
+                    <p class="description">Enabling this option will force all sites in the network to use HTTPS. If this option is disabled, each site administrator can choose to enable or disable HTTPS forcing individually.</p>
+                </td>
+                </tr>
+            </table>
+            <?php submit_button(); ?>
+        </form>
+        </div>
+    <?php
+}
+
+add_action('network_admin_edit_https_forcer_update_network_options', 'https_forcer_update_network_options');
+function https_forcer_update_network_options() {
+    check_admin_referer('https-forcer-network-options');
+
+    // Update the network-wide option
+    update_site_option('network_https_forcer_enabled', isset($_POST['network_https_forcer_enabled']) ? 1 : 0);
+
+    // Redirect back to the network settings page
+    wp_redirect(add_query_arg(array('page' => 'https-forcer-network', 'updated' => 'true'), network_admin_url('settings.php')));
+    exit;
+}
+
+add_action('network_admin_init', 'https_forcer_network_admin_init');
+function https_forcer_network_admin_init() {
+    // This hook is no longer needed if you are not doing any additional processing
+    // when the network option updates
 }
