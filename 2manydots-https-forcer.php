@@ -4,7 +4,7 @@ Plugin Name: 2manydots - HTTPS forcer
 Plugin URI: https://www.2manydots.nl/
 Description: This plugin forces all URLs to be HTTPS. That secures your website!
 Author: 2manydots
-Version: 0.1
+Version: 0.2
 */
 
 //Plugin update chcker
@@ -38,7 +38,10 @@ function https_forcer_options_page() {
             <table class="form-table">
                 <tr valign="top">
                 <th scope="row">Enable HTTPS Forcer</th>
-                <td><input type="checkbox" name="https_forcer_enabled" value="1" <?php checked(1, get_option('https_forcer_enabled', 1)); ?> /></td>
+                <td>
+                    <input type="checkbox" name="https_forcer_enabled" value="1" <?php checked(1, get_option('https_forcer_enabled', 1)); ?> />
+                    <p class="description">This setting forces everything to be HTTPS. Any questions? Feel free to ask <a href="mailto:support@2manydots.nl">support@2manydots.nl</a>.</p>
+                </td>
                 </tr>
             </table>
             <?php submit_button(); ?>
