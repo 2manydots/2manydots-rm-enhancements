@@ -4,7 +4,7 @@ Plugin Name: 2manydots - RM Enhancements
 Plugin URI: https://www.2manydots.nl/
 Description: This plugin enhancements all optimizations for our RM projects.
 Author: 2manydots
-Version: 1.1.1
+Version: 1.2.0
 */
 
 // Plugin update checker
@@ -46,6 +46,37 @@ function rm_enhancements_options_page() {
                 <input type="checkbox" name="url_lowercase_redirection_enabled" value="1" <?php checked(1, get_option('url_lowercase_redirection_enabled', 1)); ?> />
             </td>
             </tr>
+
+            <tr valign="top">
+            <th scope="row">Enable AggregateRating Data</th>
+            <td>
+                <input type="checkbox" name="aggregate_rating_enabled" value="1" <?php checked(1, get_option('aggregate_rating_enabled', 0)); ?> />
+            </td>
+            </tr>
+            <tr valign="top">
+            <th scope="row">Rating Value</th>
+            <td>
+                <input type="text" name="rating_value" value="<?php echo esc_attr(get_option('rating_value')); ?>" />
+            </td>
+            </tr>
+            <tr valign="top">
+            <th scope="row">Review Count</th>
+            <td>
+                <input type="text" name="review_count" value="<?php echo esc_attr(get_option('review_count')); ?>" />
+            </td>
+            </tr>
+            <tr valign="top">
+            <th scope="row">Best rating</th>
+            <td>
+                <input type="text" name="best_rating" value="<?php echo esc_attr(get_option('best_rating')); ?>" />
+            </td>
+            </tr>
+            <tr valign="top">
+            <th scope="row">Worst rating</th>
+            <td>
+                <input type="text" name="worst_rating" value="<?php echo esc_attr(get_option('worst_rating')); ?>" />
+            </td>
+            </tr>
         </table>
         <?php submit_button(); ?>
     </form>
@@ -59,6 +90,11 @@ add_action('admin_init', 'register_rm_enhancements_settings');
 function register_rm_enhancements_settings() {
     register_setting('rm-enhancements-options', 'https_redirection_enabled');
     register_setting('rm-enhancements-options', 'url_lowercase_redirection_enabled');
+    register_setting('rm-enhancements-options', 'aggregate_rating_enabled');
+    register_setting('rm-enhancements-options', 'rating_value');
+    register_setting('rm-enhancements-options', 'review_count');
+    register_setting('rm-enhancements-options', 'best_rating');
+    register_setting('rm-enhancements-options', 'worst_rating');
 }
 
 // Main redirection function
@@ -78,6 +114,30 @@ function rm_enhancements_redirect() {
 }
 
 add_action('template_redirect', 'rm_enhancements_redirect');
+
+// Function to insert structured data into the head section
+function insert_aggregate_rating_data() {
+    if (get_option('aggregate_rating_enabled', 0)) {
+        ?>
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": "Website review",
+            "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "<?php echo esc_attr(get_option('rating_value', '4.8')); ?>",
+                "reviewCount": "<?php echo esc_attr(get_option('review_count', '109')); ?>",
+                "bestRating": "<?php echo esc_attr(get_option('best_rating', '5')); ?>",
+                "worstRating": "<?php echo esc_attr(get_option('worst_rating', '1')); ?>"
+            }
+        }
+        </script>
+        <?php
+    }
+}
+add_action('wp_head', 'insert_aggregate_rating_data');
+
 
 // Multisite network options
 
