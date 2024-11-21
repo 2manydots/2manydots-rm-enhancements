@@ -4,7 +4,7 @@ Plugin Name: 2manydots - RM Enhancements
 Plugin URI: https://www.2manydots.nl/
 Description: This plugin enhances all optimizations for our RM projects.
 Author: 2manydots
-Version: 1.2.0.1
+Version: 1.2.0.2
 */
 
 // Plugin update checker
@@ -106,8 +106,23 @@ function rm_enhancements_redirect() {
 
     if (get_option('url_lowercase_redirection_enabled', 1)) {
         $uri = $_SERVER['REQUEST_URI'];
-        if (preg_match('/[A-Z]/', $uri)) {
-            wp_redirect(strtolower($uri), 301);
+
+        // Split URI into path and query string
+        $questionMarkPos = strpos($uri, '?');
+        if ($questionMarkPos !== false) {
+            $path = substr($uri, 0, $questionMarkPos);
+            $query = substr($uri, $questionMarkPos);
+        } else {
+            $path = $uri;
+            $query = '';
+        }
+
+        // Check if there are uppercase letters in the path
+        if (preg_match('/[A-Z]/', $path)) {
+            // Lowercase only the path
+            $lowercasePath = strtolower($path);
+            $newUri = $lowercasePath . $query;
+            wp_redirect($newUri, 301);
             exit();
         }
     }
