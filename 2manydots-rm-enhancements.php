@@ -7,6 +7,8 @@ Author: 2manydots
 Version: 1.2.0.2
 */
 
+//hello test
+
 // Plugin update checker
 require 'plugin-update-checker/plugin-update-checker.php';
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
