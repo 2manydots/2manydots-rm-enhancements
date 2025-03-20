@@ -7,7 +7,7 @@ Author: 2manydots
 Version: 1.2.0.2
 */
 
-//hello test
+//hello test test 2
 
 // Plugin update checker
 require 'plugin-update-checker/plugin-update-checker.php';
