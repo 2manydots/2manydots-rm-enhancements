@@ -1,0 +1,4 @@
+wp-content/themes/2manydots-wp-base-theme/**,
+**/*.css,
+**/*.js,
+**/*.html
