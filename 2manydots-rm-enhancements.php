@@ -4,7 +4,7 @@ Plugin Name: 2manydots - RM Enhancements
 Plugin URI: https://www.2manydots.nl/
 Description: This plugin enhances all optimizations for our RM projects.
 Author: 2manydots
-Version: 1.2.0.2
+Version: 1.3.0.0
 */
 
 // Plugin update checker
