@@ -7,8 +7,6 @@ Author: 2manydots
 Version: 1.2.0.2
 */
 
-//hello test test 2
-
 // Plugin update checker
 require 'plugin-update-checker/plugin-update-checker.php';
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
@@ -139,8 +137,8 @@ function insert_aggregate_rating_data() {
         <script type="application/ld+json">
         {
             "@context": "https://schema.org",
-            "@type": "Product",
-            "name": "Website review",
+            "@type": "Organization",
+            "name": "<?php echo esc_js(get_bloginfo('name')); ?>",
             "aggregateRating": {
                 "@type": "AggregateRating",
                 "ratingValue": "<?php echo esc_attr(get_option('rating_value', '4.8')); ?>",
@@ -201,8 +199,8 @@ function rm_enhancements_network_options_page() {
 add_action('network_admin_edit_rm_enhancements_save_network_options', 'rm_enhancements_save_network_options');
 
 function rm_enhancements_save_network_options() {
-    check_admin_referer('rm-enhancements-network-options-options');
-
+    check_admin_referer('rm-enhancements-network-options');
+    
     update_site_option('network_https_redirection_enabled', isset($_POST['network_https_redirection_enabled']) ? 1 : 0);
     update_site_option('network_url_lowercase_redirection_enabled', isset($_POST['network_url_lowercase_redirection_enabled']) ? 1 : 0);
 
